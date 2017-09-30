@@ -7,49 +7,34 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MineralSupertrumps {
-    final static String CARDBACK_SLIDE_ID = "Slide65";
     final static int INITIALHAND = 8;
     final static String[] RANKING_CLEAVAGE = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good,1 poor", "2 good",
             "3 good", "1 perfect", "1 perfect,1 good", "1 perfect,2 good", "2 perfect,1 good", "3 perfect", "4 perfect", "6 perfect"};
     final static String[] RANKING_CRUSTAL_ABUNDANCE = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
     final static String[] RANKING_ECONOMIC_VALUE = {"trivial", "low", "moderate", "high", "very high", "i'm rich!"};
 
+    static int roundNumber = 1;
     static boolean superTrumpCardInFirstRound = false;
     static boolean firstTurn = true;
     static ArrayList<Card> deck = new ArrayList<Card>();
-    static Card lastPlayedCard;
+    static Card lastPlayedCard = null;
     static ArrayList<Player> players = new ArrayList<Player>();
     static int dealerIndex;
     static int turnPlayerIndex;
     static int category = 0;
     static Scanner input;
 
+    static GameFrame frame;
+
     public static void main(String[] args) {
-        input = new Scanner(System.in);
-        int playerAmount = 0;
-
-        GameFrame frame = new GameFrame("Mineral Supertrumps");
-
-
         parseCards();
         shuffleDeck();
 
-        while (playerAmount < 3 || playerAmount > 5) {
-            try {
-
-                System.out.println("How many players? (Minimum - 3, Maximum - 5)");
-                playerAmount = input.nextInt();
-            } catch (InputMismatchException e) {
-                System.out.println("A number is required, please try again");
-                input.next();
-            }
-        }
-        setPlayers(playerAmount);
-        dealCards();
-        runGame();
+        frame = new GameFrame("Mineral Supertrumps");
+        frame.playerAmountPanel();
     }
 
-    private static void dealCards() {
+    static void dealCards() {
         for (int i = 0; i < INITIALHAND; i++) {
             for (int y = 0; y < players.size(); y++) {
                 players.get(y).addCard(deck.get(0));
@@ -58,7 +43,7 @@ public class MineralSupertrumps {
         }
     }
 
-    private static void setPlayers(int playerAmount) {
+    static void setPlayers(int playerAmount) {
         for (int i = 0; i < playerAmount; i++) {
             Player player = new Player();
             players.add(player);
@@ -106,15 +91,28 @@ public class MineralSupertrumps {
         deck.add(new SuperTrumpCard("The Geologist", "Change trumps category of your choice"));
     }
 
-    private static void runGame() {
+    static void startGame(){
         nextPlayer(dealerIndex);
-        while (players.size() != 1) {
-            newRound();
-        }
-        System.out.println("Player " + players.get(0).getID() + " lost");
+        System.out.println("NEW ROUND");
+        frame.updatePanel(players.get(turnPlayerIndex));
     }
 
-    private static void nextPlayer(int index) {
+    static void turnFinished(){
+        nextPlayer(turnPlayerIndex);
+        frame.remove(frame.hand);
+        if (roundEnd()){
+            roundNumber ++;
+            for (Player player : players) {
+                player.setPass(false);
+            }
+            firstTurn = true;
+        }
+        if (players.size() != 1) {
+            frame.updatePanel(players.get(turnPlayerIndex));
+        }
+    }
+
+    static void nextPlayer(int index) {
         // return given int as index for player array
         if (players.size() - 1 <= index) {
             turnPlayerIndex = 0;
@@ -123,50 +121,6 @@ public class MineralSupertrumps {
         }
         if (players.get(turnPlayerIndex).isPass()) {
             nextPlayer(turnPlayerIndex);
-        }
-    }
-
-    private static void newRound() {
-        System.out.println("*** NEW ROUND ***");
-        for (Player player : players) {
-            player.setPass(false);
-        }
-        while (!roundEnd()) {
-            if (!firstTurn) {
-                showLastPlayedCard();
-            }
-            players.get(turnPlayerIndex).playCard();
-            nextPlayer(turnPlayerIndex);
-            System.out.println();
-        }
-        firstTurn = true;
-    }
-
-    private static void showLastPlayedCard() {
-        if (lastPlayedCard != null) {
-            System.out.println("Previously played card: " + lastPlayedCard.getName());
-            switch (category) {
-                case 1: {
-                    System.out.println(lastPlayedCard.getName() + "'s Hardness:" + lastPlayedCard.getHardness());
-                    break;
-                }
-                case 2: {
-                    System.out.println(lastPlayedCard.getName() + "'s Specific Gravity:" + lastPlayedCard.getGravity());
-                    break;
-                }
-                case 3: {
-                    System.out.println(lastPlayedCard.getName() + "'s Cleavage:" + lastPlayedCard.getCleavage());
-                    break;
-                }
-                case 4: {
-                    System.out.println(lastPlayedCard.getName() + "'s Crustal Abundance:" + lastPlayedCard.getAbundance());
-                    break;
-                }
-                case 5: {
-                    System.out.println(lastPlayedCard.getName() + "'s Economic Value:" + lastPlayedCard.getEcoValue());
-                    break;
-                }
-            }
         }
     }
 
