@@ -6,22 +6,20 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MineralSupertrumps {
-    final static int INITIALHAND = 8;
-    final static String[] RANKING_CLEAVAGE = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good/1 poor", "2 good",
+    private final static int INITIALHAND = 8;
+    private final static String[] RANKING_CLEAVAGE = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good/1 poor", "2 good",
             "3 good", "1 perfect", "1 perfect/1 good", "1 perfect/2 good", "2 perfect/1 good", "3 perfect", "4 perfect", "6 perfect"};
-    final static String[] RANKING_CRUSTAL_ABUNDANCE = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
-    final static String[] RANKING_ECONOMIC_VALUE = {"trivial", "low", "moderate", "high", "very high", "i'm rich!"};
+    private final static String[] RANKING_CRUSTAL_ABUNDANCE = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
+    private final static String[] RANKING_ECONOMIC_VALUE = {"trivial", "low", "moderate", "high", "very high", "i'm rich!"};
 
     static int roundNumber = 1;
-    static boolean superTrumpCardInFirstRound = false;
     static boolean firstTurn = true;
-    static ArrayList<Card> deck = new ArrayList<Card>();
+    static ArrayList<Card> deck = new ArrayList<>();
     static Card lastPlayedCard = null;
-    static ArrayList<Player> players = new ArrayList<Player>();
-    static int dealerIndex;
-    static int turnPlayerIndex;
+    static ArrayList<Player> players = new ArrayList<>();
+    private static int dealerIndex;
+    private static int turnPlayerIndex;
     static int category = 0;
-    static Scanner input;
 
     static GameFrame frame;
 
@@ -35,11 +33,12 @@ public class MineralSupertrumps {
 
     static void dealCards() {
         for (int i = 0; i < INITIALHAND; i++) {
-            for (int y = 0; y < players.size(); y++) {
-                players.get(y).addCard(deck.get(0));
+            for (Player player : players) {
+                player.addCard(deck.get(0));
                 deck.remove(0);
             }
         }
+        startGame();
     }
 
     static void setPlayers(int playerAmount) {
@@ -90,9 +89,8 @@ public class MineralSupertrumps {
         deck.add(new SuperTrumpCard("The Geologist", "Change trumps category of your choice"));
     }
 
-    static void startGame() {
+    private static void startGame() {
         nextPlayer(dealerIndex);
-        System.out.println("NEW ROUND");
         frame.updatePanel(players.get(turnPlayerIndex));
     }
 
@@ -103,14 +101,16 @@ public class MineralSupertrumps {
 
         nextPlayer(turnPlayerIndex);
         frame.remove(frame.hand);
+
         if (roundEnd()) {
             roundNumber++;
             lastPlayedCard = null;
             for (Player player : players) {
-                player.setPass(false);
+                player.setPass();
             }
             firstTurn = true;
         }
+
         if (players.size() != 1) {
             frame.updatePanel(players.get(turnPlayerIndex));
         } else {
@@ -118,7 +118,7 @@ public class MineralSupertrumps {
         }
     }
 
-    static void nextPlayer(int index) {
+    private static void nextPlayer(int index) {
         // return given int as index for player array
         if (players.size() - 1 <= index) {
             turnPlayerIndex = 0;
@@ -196,7 +196,7 @@ public class MineralSupertrumps {
     static void trumpCardPlayed() {
         for (Player player : players) {
             if (player.isPass()) {
-                player.setPass(false);
+                player.setPass();
             }
         }
     }

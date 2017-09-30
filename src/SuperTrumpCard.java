@@ -1,5 +1,3 @@
-import java.util.InputMismatchException;
-
 class SuperTrumpCard extends Card {
     SuperTrumpCard(String name, String instruction) {
         super(name, instruction);

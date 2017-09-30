@@ -1,4 +1,4 @@
-public class Card {
+class Card {
     private static int counter = 1;
 
     private String name;
@@ -10,7 +10,7 @@ public class Card {
     private String ecoValue;
     private String instruction;
 
-    public Card(String name, double hardness, double gravity, String cleavage, String abundance, String ecoValue) {
+    Card(String name, double hardness, double gravity, String cleavage, String abundance, String ecoValue) {
         this.name = name;
         String decimalNumber = (counter < 10 ? "0" : "") + counter++;
         this.slideID = "Slide" + decimalNumber;
@@ -21,42 +21,42 @@ public class Card {
         this.ecoValue = ecoValue;
     }
 
-    public Card(String name, String instruction) {
+    Card(String name, String instruction) {
         this.name = name;
         String decimalNumber = (counter < 10 ? "0" : "") + counter++;
         this.slideID = "Slide" + decimalNumber;
         this.instruction = instruction;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public String getSlideID() {
+    String getSlideID() {
         return slideID;
     }
 
-    public double getHardness() {
+    double getHardness() {
         return hardness;
     }
 
-    public double getGravity() {
+    double getGravity() {
         return gravity;
     }
 
-    public String getCleavage() {
+    String getCleavage() {
         return cleavage;
     }
 
-    public String getAbundance() {
+    String getAbundance() {
         return abundance;
     }
 
-    public String getEcoValue() {
+    String getEcoValue() {
         return ecoValue;
     }
 
-    public String getInstruction() {
+    String getInstruction() {
         return instruction;
     }
 }

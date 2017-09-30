@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
 
 class Player {
     private static int counter = 1;
@@ -20,8 +18,8 @@ class Player {
         return pass;
     }
 
-    void setPass(boolean pass) {
-        this.pass = pass;
+    void setPass() {
+        this.pass = false;
     }
 
     void addCard(Card card) {
@@ -32,7 +30,7 @@ class Player {
         this.hand.remove(card);
     }
 
-    public ArrayList<Card> getHand() {
+    ArrayList<Card> getHand() {
         return hand;
     }
 

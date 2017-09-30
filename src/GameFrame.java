@@ -6,19 +6,17 @@ import java.awt.event.ActionListener;
 
 public class GameFrame extends JFrame implements ActionListener {
 
-    final ImageIcon CARDBACK_IMAGE = getScaledImage(new ImageIcon("images/Slide65.jpg"));
-    final Dimension CARD_SIZE_DIMENSION = new Dimension(200, 300);
-    final int DEFAULT_COLUMNS = 4;
+    private final Dimension CARD_SIZE_DIMENSION = new Dimension(200, 300);
 
-    JPanel playerAmountChoice;
     JPanel hand;
-    JPanel table;
-    JPanel categoryChoice;
-    JLabel lastPlayedCard;
-    JLabel deck;
-    JLabel status;
+    private JPanel table;
+    private JPanel playerAmountChoice;
+    private JPanel categoryChoice;
+    private JLabel lastPlayedCard;
+    private JLabel deck;
+    private JLabel status;
 
-    public GameFrame(String title) throws HeadlessException {
+    GameFrame(String title) throws HeadlessException {
         super(title);
 
         table = new JPanel(new BorderLayout());
@@ -33,7 +31,9 @@ public class GameFrame extends JFrame implements ActionListener {
         status = new JLabel("Mineral Supertrumps", SwingConstants.CENTER);
         status.setOpaque(true);
         status.setBackground(new Color(230, 219, 224));
-        deck = new JLabel(CARDBACK_IMAGE);
+
+        ImageIcon cardbackImage = getScaledImage(new ImageIcon("images/Slide65.jpg"));
+        deck = new JLabel(cardbackImage);
         deck.setText("Cards left: " + MineralSupertrumps.deck.size());
         deck.setHorizontalTextPosition(JLabel.CENTER);
         deck.setVerticalTextPosition(JLabel.BOTTOM);
@@ -135,8 +135,7 @@ public class GameFrame extends JFrame implements ActionListener {
         pack();
     }
 
-    void categoryPanel(Card card) {
-        System.out.println("b");
+    private void categoryPanel(Card card) {
         categoryChoice = new JPanel(new GridLayout(5, 1));
 
         JButton hardness = new JButton("Hardness: " + card.getHardness());
@@ -192,6 +191,7 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     void updatePanel(Player player) {
+        //If there is no last played card in a round
         if (MineralSupertrumps.lastPlayedCard != null) {
             lastPlayedCard.setIcon(getScaledImage(new ImageIcon("images/" + MineralSupertrumps.lastPlayedCard.getSlideID() + ".jpg")));
             table.add(lastPlayedCard, "North");
@@ -204,15 +204,18 @@ public class GameFrame extends JFrame implements ActionListener {
         status.setText("<html>Round: " + MineralSupertrumps.roundNumber + "<br>Category: " + MineralSupertrumps.getCategory() + "<br>It's player " + player.getID() + " turn</html>"
         );
 
-        int row = (player.getHand().size() + 1) / DEFAULT_COLUMNS;
-        if ((player.getHand().size() + 1) % DEFAULT_COLUMNS != 0) {
+        //Decision was to use 4 columns as a default, rows are dynamic
+        int col = 4;
+        int row = (player.getHand().size() + 1) / col;
+        if ((player.getHand().size() + 1) % col != 0) {
             row++;
         }
 
-        hand = new JPanel(new GridLayout(row, DEFAULT_COLUMNS, 10, 10));
+        hand = new JPanel(new GridLayout(row, col, 10, 10));
         hand.setBorder(new EmptyBorder(10, 10, 10, 10));
 
 
+        //Pass button to pass a turn
         JButton pass = new JButton("Pass");
         pass.addActionListener(e -> {
             player.passTurn();
@@ -228,6 +231,7 @@ public class GameFrame extends JFrame implements ActionListener {
             cards[x].setPreferredSize(CARD_SIZE_DIMENSION);
             cards[x].setText(player.getHand().get(x).getName());
 
+            //If the cards are lower than the value of previous card category -> make this card unclickable
             if (MineralSupertrumps.lastPlayedCard != null && !MineralSupertrumps.firstTurn) {
                 if (!MineralSupertrumps.validCard(player.getHand().get(x))) {
                     cards[x].setEnabled(false);
@@ -237,7 +241,7 @@ public class GameFrame extends JFrame implements ActionListener {
             cards[x].addActionListener(e -> {
                 status.setText("Player " + player.getID() + " has chosen \"" + e.getActionCommand() + "\" card");
 
-
+                //Finds which card was chosen and saves it inside variable
                 Card chosenCard = null;
                 for (Card card : player.getHand()) {
                     if (card.getName().equals(e.getActionCommand())) {
@@ -251,7 +255,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     if (MineralSupertrumps.firstTurn) {
                         MineralSupertrumps.firstTurn = false;
                     }
-                    //if "The Geologist" card played
+                    //if any trump card played make other cards unclickable
                     pass.setEnabled(false);
                     for (JButton button :
                             cards) {
@@ -268,6 +272,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     MineralSupertrumps.lastPlayedCard = chosenCard;
                 }
 
+                //If it is first turn of a round, choose a category and make other cards unclickable
                 if (MineralSupertrumps.firstTurn && chosenCard.getInstruction() == null) {
                     pass.setEnabled(false);
                     for (JButton button :
@@ -292,6 +297,7 @@ public class GameFrame extends JFrame implements ActionListener {
         pack();
     }
 
+    //Rescaling an image
     private ImageIcon getScaledImage(ImageIcon imgIcon) {
         Image image = imgIcon.getImage();
         Image newImg = image.getScaledInstance(200, 300, Image.SCALE_SMOOTH);
@@ -300,6 +306,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        //When a user choose player amount, set the player amount to an appropriate value
         if (e.getActionCommand().equals("3") || e.getActionCommand().equals("4") || e.getActionCommand().equals("5")) {
             String number = e.getActionCommand();
             switch (number) {
@@ -320,22 +327,19 @@ public class GameFrame extends JFrame implements ActionListener {
             validate();
             repaint();
             pack();
+
+            //called from this class to avoid multiple threads and so errors
             MineralSupertrumps.dealCards();
-            MineralSupertrumps.startGame();
         }
     }
 
-    public void endGame() {
+    //If there is only 1 player left, program finishes the game
+    void endGame() {
         remove(hand);
         table.remove(lastPlayedCard);
         status.setText("Player " + MineralSupertrumps.players.get(0).getID() + " is the loser of this game!");
         JButton exit = new JButton("Exit");
-        exit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        exit.addActionListener(e -> dispose());
         table.add(deck, "North");
         table.add(status, "Center");
         table.add(exit, "South");
