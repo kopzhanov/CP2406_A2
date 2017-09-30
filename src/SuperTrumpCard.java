@@ -32,25 +32,7 @@ class SuperTrumpCard extends Card {
                 break;
             }
             case "The Geologist": {
-                int category;
-                System.out.println("1.Hardness");
-                System.out.println("2.Specific Gravity");
-                System.out.println("3.Cleavage");
-                System.out.println("4.Crustal Abundance");
-                System.out.println("5.Economic Value");
-
-                System.out.println("Choose a category according to its number");
-                category = MineralSupertrumps.input.nextInt();
-                while (category < 1 || category > 5) {
-                    try {
-                        System.out.println("Choose a category according to its number (Minimum - 0, Maximum - 5)");
-                        category = MineralSupertrumps.input.nextInt();
-                    } catch (InputMismatchException e) {
-                        System.out.println("A number is required, try again");
-                        MineralSupertrumps.input.next();
-                    }
-                }
-                MineralSupertrumps.category = category;
+                MineralSupertrumps.frame.categoryPanel(null);
                 break;
             }
         }

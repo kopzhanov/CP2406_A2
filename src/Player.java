@@ -70,8 +70,6 @@ class Player {
                     validCard = true;
                 }
                 validCard = true;
-            } catch (InvalidCardException e) {
-                System.out.println(e.getMessage());
             } catch (InputMismatchException e) {
                 System.out.println("A number is require, please try again");
             }
@@ -132,7 +130,7 @@ class Player {
         System.out.println("Player " + id + " passes the turn and taking 1 card from the deck");
     }
 
-    private boolean hasMagnetite() {
+    boolean hasMagnetite() {
         boolean isMagnetite = false;
         for (Card card : hand) {
             if (card.getName().equals("Magnetite"))

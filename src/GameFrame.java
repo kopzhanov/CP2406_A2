@@ -145,6 +145,8 @@ public class GameFrame extends JFrame implements ActionListener {
         if (MineralSupertrumps.lastPlayedCard != null) {
             lastPlayedCard.setIcon(getScaledImage(new ImageIcon("images/" + MineralSupertrumps.lastPlayedCard.getSlideID() + ".jpg")));
             table.add(lastPlayedCard, "North");
+        } else {
+            table.remove(lastPlayedCard);
         }
 
 
@@ -161,12 +163,9 @@ public class GameFrame extends JFrame implements ActionListener {
 
 
         JButton pass = new JButton("Pass");
-        pass.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                player.passTurn();
-                MineralSupertrumps.turnFinished();
-            }
+        pass.addActionListener(e -> {
+            player.passTurn();
+            MineralSupertrumps.turnFinished();
         });
         pass.setFont(new Font("Serif", Font.PLAIN, 20));
 
@@ -178,14 +177,25 @@ public class GameFrame extends JFrame implements ActionListener {
             cards[x].setPreferredSize(CARD_SIZE_DIMENSION);
             cards[x].setText(player.getHand().get(x).getName());
 
+            if (MineralSupertrumps.lastPlayedCard != null && !MineralSupertrumps.firstTurn) {
+                if (!MineralSupertrumps.validCard(player.getHand().get(x))) {
+                    cards[x].setEnabled(false);
+                }
+            }
+
             cards[x].addActionListener(e -> {
                 status.setText("Player " + player.getID() + " has chosen \"" + e.getActionCommand() + "\" card");
+
 
                 Card chosenCard = null;
                 for (Card card : player.getHand()) {
                     if (card.getName().equals(e.getActionCommand())) {
                         chosenCard = card;
                     }
+                }
+
+                if (chosenCard != null && chosenCard.getInstruction() != null) {
+                    SuperTrumpCard.playCard(chosenCard, player.hasMagnetite(), player);
                 }
 
                 player.removeCard(chosenCard);
@@ -197,7 +207,6 @@ public class GameFrame extends JFrame implements ActionListener {
                             cards) {
                         button.setEnabled(false);
                     }
-
                     categoryPanel(chosenCard);
                 } else {
                     MineralSupertrumps.turnFinished();
@@ -247,5 +256,24 @@ public class GameFrame extends JFrame implements ActionListener {
             MineralSupertrumps.dealCards();
             MineralSupertrumps.startGame();
         }
+    }
+
+    public void endGame() {
+        remove(hand);
+        table.remove(lastPlayedCard);
+        table.remove(newRoundNotification);
+        status.setText("Player " + MineralSupertrumps.players.get(0).getID() + " is the loser of this game!");
+        JButton exit = new JButton("Exit");
+        exit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+            }
+        });
+        table.add(deck, "North");
+        table.add(status, "Center");
+        table.add(exit, "South");
+        pack();
+        validate();
     }
 }

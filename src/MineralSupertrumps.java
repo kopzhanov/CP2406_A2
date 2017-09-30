@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -91,17 +90,22 @@ public class MineralSupertrumps {
         deck.add(new SuperTrumpCard("The Geologist", "Change trumps category of your choice"));
     }
 
-    static void startGame(){
+    static void startGame() {
         nextPlayer(dealerIndex);
         System.out.println("NEW ROUND");
         frame.updatePanel(players.get(turnPlayerIndex));
     }
 
-    static void turnFinished(){
+    static void turnFinished() {
+        if (players.get(turnPlayerIndex).getHand().size() == 0) {
+            players.remove(turnPlayerIndex);
+        }
+
         nextPlayer(turnPlayerIndex);
         frame.remove(frame.hand);
-        if (roundEnd()){
-            roundNumber ++;
+        if (roundEnd()) {
+            roundNumber++;
+            lastPlayedCard = null;
             for (Player player : players) {
                 player.setPass(false);
             }
@@ -109,6 +113,8 @@ public class MineralSupertrumps {
         }
         if (players.size() != 1) {
             frame.updatePanel(players.get(turnPlayerIndex));
+        } else {
+            frame.endGame();
         }
     }
 
@@ -134,50 +140,36 @@ public class MineralSupertrumps {
         return playerPassed == players.size() - 1;
     }
 
-    static void validCard(Card card) throws InvalidCardException {
-        if (!superTrumpCardInFirstRound) {
-            // Checking if the card is not SuperTrumpCard
-            if (card.getInstruction() == null) {
-                switch (category) {
-                    case 1: {
-                        if (card.getHardness() <= lastPlayedCard.getHardness()) {
-                            throw new InvalidCardException("Hardness of " + card.getName() + " is not higher than of " + lastPlayedCard.getName());
-                        }
-                        break;
-                    }
-                    case 2: {
-                        if (card.getGravity() <= lastPlayedCard.getGravity()) {
-                            throw new InvalidCardException("Gravity of " + card.getName() + " is not higher than of " + lastPlayedCard.getName());
-                        }
-                        break;
-                    }
-                    case 3: {
-                        int firstIndex = Arrays.binarySearch(RANKING_CLEAVAGE, card.getCleavage());
-                        int secondIndex = Arrays.binarySearch(RANKING_CLEAVAGE, lastPlayedCard.getCleavage());
-                        if (firstIndex <= secondIndex) {
-                            throw new InvalidCardException("Cleavage of " + card.getName() + " is not higher than of " + lastPlayedCard.getName());
-                        }
-                        break;
-                    }
-                    case 4: {
-                        int firstIndex = Arrays.binarySearch(RANKING_CRUSTAL_ABUNDANCE, card.getAbundance());
-                        int secondIndex = Arrays.binarySearch(RANKING_CLEAVAGE, lastPlayedCard.getAbundance());
-                        if (firstIndex <= secondIndex) {
-                            throw new InvalidCardException("Crustal Abundance of " + card.getName() + " is not higher than of " + lastPlayedCard.getName());
-                        }
-                        break;
-                    }
-                    case 5: {
-                        int firstIndex = Arrays.binarySearch(RANKING_ECONOMIC_VALUE, card.getEcoValue());
-                        int secondIndex = Arrays.binarySearch(RANKING_ECONOMIC_VALUE, lastPlayedCard.getEcoValue());
-                        if (firstIndex <= secondIndex) {
-                            throw new InvalidCardException("Economic Value of " + card.getName() + " is not higher than of " + lastPlayedCard.getName());
-                        }
-                        break;
-                    }
+    static boolean validCard(Card card) {
+        //if the card is not SuperTrumpCard
+        if (card.getInstruction() == null) {
+            switch (category) {
+                case 1: {
+                    return (card.getHardness() > lastPlayedCard.getHardness());
+                }
+                case 2: {
+                    return (card.getGravity() > lastPlayedCard.getGravity());
+                }
+                case 3: {
+                    int firstIndex = Arrays.binarySearch(RANKING_CLEAVAGE, card.getCleavage());
+                    int secondIndex = Arrays.binarySearch(RANKING_CLEAVAGE, lastPlayedCard.getCleavage());
+                    return (firstIndex > secondIndex);
+                }
+                case 4: {
+                    int firstIndex = Arrays.binarySearch(RANKING_CRUSTAL_ABUNDANCE, card.getAbundance());
+                    int secondIndex = Arrays.binarySearch(RANKING_CLEAVAGE, lastPlayedCard.getAbundance());
+                    return (firstIndex <= secondIndex);
+                }
+                case 5: {
+                    int firstIndex = Arrays.binarySearch(RANKING_ECONOMIC_VALUE, card.getEcoValue());
+                    int secondIndex = Arrays.binarySearch(RANKING_ECONOMIC_VALUE, lastPlayedCard.getEcoValue());
+                    return (firstIndex <= secondIndex);
                 }
             }
+        } else {
+            return true;
         }
+        return false;
     }
 
     static void trumpCardPlayed() {
