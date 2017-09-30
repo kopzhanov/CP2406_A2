@@ -29,8 +29,7 @@ public class MineralSupertrumps {
         int playerAmount = 0;
 
         GameFrame frame = new GameFrame("Mineral Supertrumps");
-        frame.add(new JLabel(new ImageIcon("images/Slide65.jpg")));
-        frame.validate();
+
 
         parseCards();
         shuffleDeck();
