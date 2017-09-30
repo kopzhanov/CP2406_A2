@@ -12,7 +12,8 @@ public class Card {
 
     public Card(String name, double hardness, double gravity, String cleavage, String abundance, String ecoValue) {
         this.name = name;
-        this.slideID = "Slide" + counter++;
+        String decimalNumber = (counter < 10 ? "0" : "") + counter++;
+        this.slideID = "Slide" + decimalNumber;
         this.hardness = hardness;
         this.gravity = gravity;
         this.cleavage = cleavage;
@@ -22,7 +23,8 @@ public class Card {
 
     public Card(String name, String instruction) {
         this.name = name;
-        this.slideID = "Slide" + counter++;
+        String decimalNumber = (counter < 10 ? "0" : "") + counter++;
+        this.slideID = "Slide" + decimalNumber;
         this.instruction = instruction;
     }
 
