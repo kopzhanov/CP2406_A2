@@ -8,7 +8,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     final ImageIcon CARDBACK_IMAGE = getScaledImage(new ImageIcon("images/Slide65.jpg"));
     final Dimension CARD_SIZE_DIMENSION = new Dimension(200, 300);
-    final int DEFAULT_COLUMNS = 3;
+    final int DEFAULT_COLUMNS = 4;
 
     JPanel playerAmountChoice;
     JPanel hand;
@@ -17,14 +17,12 @@ public class GameFrame extends JFrame implements ActionListener {
     JLabel lastPlayedCard;
     JLabel deck;
     JLabel status;
-    JLabel newRoundNotification;
 
     public GameFrame(String title) throws HeadlessException {
         super(title);
 
         table = new JPanel(new BorderLayout());
 
-        newRoundNotification = new JLabel("", SwingConstants.CENTER);
 
         lastPlayedCard = new JLabel("", SwingConstants.CENTER);
         lastPlayedCard.setPreferredSize(new Dimension(200, 320));
@@ -42,9 +40,8 @@ public class GameFrame extends JFrame implements ActionListener {
         deck.setPreferredSize(new Dimension(200, 320));
 
 
-        table.add(newRoundNotification, "North");
         table.add(status, "South");
-        table.add(deck);
+        table.add(deck, "Center");
         table.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         add(table, BorderLayout.EAST);
@@ -140,8 +137,6 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     void updatePanel(Player player) {
-        newRoundNotification.setText("Round " + MineralSupertrumps.roundNumber);
-
         if (MineralSupertrumps.lastPlayedCard != null) {
             lastPlayedCard.setIcon(getScaledImage(new ImageIcon("images/" + MineralSupertrumps.lastPlayedCard.getSlideID() + ".jpg")));
             table.add(lastPlayedCard, "North");
@@ -151,7 +146,8 @@ public class GameFrame extends JFrame implements ActionListener {
 
 
         deck.setText("Cards left: " + MineralSupertrumps.deck.size());
-        status.setText("It's player " + player.getID() + " turn");
+        status.setText("<html>Round: " + MineralSupertrumps.roundNumber + "<br>Category: " + MineralSupertrumps.getCategory() + "<br>It's player " + player.getID() + " turn</html>"
+        );
 
         int row = (player.getHand().size() + 1) / DEFAULT_COLUMNS;
         if ((player.getHand().size() + 1) % DEFAULT_COLUMNS != 0) {
@@ -261,7 +257,6 @@ public class GameFrame extends JFrame implements ActionListener {
     public void endGame() {
         remove(hand);
         table.remove(lastPlayedCard);
-        table.remove(newRoundNotification);
         status.setText("Player " + MineralSupertrumps.players.get(0).getID() + " is the loser of this game!");
         JButton exit = new JButton("Exit");
         exit.addActionListener(new ActionListener() {

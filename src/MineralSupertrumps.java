@@ -140,6 +140,27 @@ public class MineralSupertrumps {
         return playerPassed == players.size() - 1;
     }
 
+    static String getCategory() {
+        switch (category) {
+            case 1: {
+                return "Hardness";
+            }
+            case 2: {
+                return "Specific Gravity";
+            }
+            case 3: {
+                return "Cleavage";
+            }
+            case 4: {
+                return "Crustal Abundance";
+            }
+            case 5: {
+                return "Economic Value";
+            }
+        }
+        return "None";
+    }
+
     static boolean validCard(Card card) {
         //if the card is not SuperTrumpCard
         if (card.getInstruction() == null) {
