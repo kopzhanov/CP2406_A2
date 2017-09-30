@@ -94,30 +94,35 @@ public class GameFrame extends JFrame implements ActionListener {
             MineralSupertrumps.category = 1;
             remove(categoryChoice);
             pack();
+            MineralSupertrumps.trumpCardPlayed();
             MineralSupertrumps.turnFinished();
         });
         gravity.addActionListener(e -> {
             MineralSupertrumps.category = 2;
             remove(categoryChoice);
             pack();
+            MineralSupertrumps.trumpCardPlayed();
             MineralSupertrumps.turnFinished();
         });
         cleavage.addActionListener(e -> {
             MineralSupertrumps.category = 3;
             remove(categoryChoice);
             pack();
+            MineralSupertrumps.trumpCardPlayed();
             MineralSupertrumps.turnFinished();
         });
         abundance.addActionListener(e -> {
             MineralSupertrumps.category = 4;
             remove(categoryChoice);
             pack();
+            MineralSupertrumps.trumpCardPlayed();
             MineralSupertrumps.turnFinished();
         });
         ecoValue.addActionListener(e -> {
             MineralSupertrumps.category = 5;
             remove(categoryChoice);
             pack();
+            MineralSupertrumps.trumpCardPlayed();
             MineralSupertrumps.turnFinished();
         });
         categoryChoice.add(hardness);
@@ -246,10 +251,17 @@ public class GameFrame extends JFrame implements ActionListener {
                     if (MineralSupertrumps.firstTurn) {
                         MineralSupertrumps.firstTurn = false;
                     }
+                    //if "The Geologist" card played
+                    pass.setEnabled(false);
+                    for (JButton button :
+                            cards) {
+                        button.setEnabled(false);
+                    }
                     SuperTrumpCard.playCard(chosenCard, player.hasMagnetite(), player);
                 }
 
                 player.removeCard(chosenCard);
+
                 assert chosenCard != null;
                 //If card is not SuperTrump card
                 if (chosenCard.getInstruction() == null) {
