@@ -32,6 +32,14 @@ class Player {
         this.hand.add(card);
     }
 
+    void removeCard(Card card) {
+        this.hand.remove(card);
+    }
+
+    public ArrayList<Card> getHand() {
+        return hand;
+    }
+
     private void showHand() {
         int count = 1;
         System.out.format("%-10s%-20s%-10s%-20s%-20s%-20s%-15s\n", "Number", "Name", "Hardness", "Specific Gravity", "Cleavage", "Crustal Abundance", "Economic Value");
@@ -117,7 +125,7 @@ class Player {
         }
     }
 
-    private void passTurn() {
+    void passTurn() {
         pass = true;
         this.addCard(MineralSupertrumps.deck.get(0));
         MineralSupertrumps.deck.remove(0);
