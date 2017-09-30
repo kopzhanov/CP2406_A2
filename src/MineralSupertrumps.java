@@ -7,8 +7,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MineralSupertrumps {
     final static int INITIALHAND = 8;
-    final static String[] RANKING_CLEAVAGE = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good,1 poor", "2 good",
-            "3 good", "1 perfect", "1 perfect,1 good", "1 perfect,2 good", "2 perfect,1 good", "3 perfect", "4 perfect", "6 perfect"};
+    final static String[] RANKING_CLEAVAGE = {"none", "poor/none", "1 poor", "2 poor", "1 good", "1 good/1 poor", "2 good",
+            "3 good", "1 perfect", "1 perfect/1 good", "1 perfect/2 good", "2 perfect/1 good", "3 perfect", "4 perfect", "6 perfect"};
     final static String[] RANKING_CRUSTAL_ABUNDANCE = {"ultratrace", "trace", "low", "moderate", "high", "very high"};
     final static String[] RANKING_ECONOMIC_VALUE = {"trivial", "low", "moderate", "high", "very high", "i'm rich!"};
 
@@ -163,7 +163,7 @@ public class MineralSupertrumps {
 
     static boolean validCard(Card card) {
         //if the card is not SuperTrumpCard
-        if (card.getInstruction() == null) {
+        if (card.getInstruction() == null && lastPlayedCard.getCleavage() != null && lastPlayedCard.getAbundance() != null && lastPlayedCard.getEcoValue() != null) {
             switch (category) {
                 case 1: {
                     return (card.getHardness() > lastPlayedCard.getHardness());
@@ -172,19 +172,19 @@ public class MineralSupertrumps {
                     return (card.getGravity() > lastPlayedCard.getGravity());
                 }
                 case 3: {
-                    int firstIndex = Arrays.binarySearch(RANKING_CLEAVAGE, card.getCleavage());
-                    int secondIndex = Arrays.binarySearch(RANKING_CLEAVAGE, lastPlayedCard.getCleavage());
+                    int firstIndex = Arrays.asList(RANKING_CLEAVAGE).indexOf(card.getCleavage());
+                    int secondIndex = Arrays.asList(RANKING_CLEAVAGE).indexOf(lastPlayedCard.getCleavage());
                     return (firstIndex > secondIndex);
                 }
                 case 4: {
-                    int firstIndex = Arrays.binarySearch(RANKING_CRUSTAL_ABUNDANCE, card.getAbundance());
-                    int secondIndex = Arrays.binarySearch(RANKING_CLEAVAGE, lastPlayedCard.getAbundance());
-                    return (firstIndex <= secondIndex);
+                    int firstIndex = Arrays.asList(RANKING_CRUSTAL_ABUNDANCE).indexOf(card.getAbundance());
+                    int secondIndex = Arrays.asList(RANKING_CRUSTAL_ABUNDANCE).indexOf(lastPlayedCard.getAbundance());
+                    return (firstIndex > secondIndex);
                 }
                 case 5: {
-                    int firstIndex = Arrays.binarySearch(RANKING_ECONOMIC_VALUE, card.getEcoValue());
-                    int secondIndex = Arrays.binarySearch(RANKING_ECONOMIC_VALUE, lastPlayedCard.getEcoValue());
-                    return (firstIndex <= secondIndex);
+                    int firstIndex = Arrays.asList(RANKING_ECONOMIC_VALUE).indexOf(card.getEcoValue());
+                    int secondIndex = Arrays.asList(RANKING_ECONOMIC_VALUE).indexOf(lastPlayedCard.getEcoValue());
+                    return (firstIndex > secondIndex);
                 }
             }
         } else {

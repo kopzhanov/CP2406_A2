@@ -81,7 +81,57 @@ public class GameFrame extends JFrame implements ActionListener {
         validate();
     }
 
+    void categoryPanel() {
+        categoryChoice = new JPanel(new GridLayout(5, 1));
+
+        JButton hardness = new JButton("Hardness");
+        JButton gravity = new JButton("Specific Gravity");
+        JButton cleavage = new JButton("Cleavage");
+        JButton abundance = new JButton("Crustal Abundance");
+        JButton ecoValue = new JButton("Economic Value");
+
+        hardness.addActionListener(e -> {
+            MineralSupertrumps.category = 1;
+            remove(categoryChoice);
+            pack();
+            MineralSupertrumps.turnFinished();
+        });
+        gravity.addActionListener(e -> {
+            MineralSupertrumps.category = 2;
+            remove(categoryChoice);
+            pack();
+            MineralSupertrumps.turnFinished();
+        });
+        cleavage.addActionListener(e -> {
+            MineralSupertrumps.category = 3;
+            remove(categoryChoice);
+            pack();
+            MineralSupertrumps.turnFinished();
+        });
+        abundance.addActionListener(e -> {
+            MineralSupertrumps.category = 4;
+            remove(categoryChoice);
+            pack();
+            MineralSupertrumps.turnFinished();
+        });
+        ecoValue.addActionListener(e -> {
+            MineralSupertrumps.category = 5;
+            remove(categoryChoice);
+            pack();
+            MineralSupertrumps.turnFinished();
+        });
+        categoryChoice.add(hardness);
+        categoryChoice.add(gravity);
+        categoryChoice.add(cleavage);
+        categoryChoice.add(abundance);
+        categoryChoice.add(ecoValue);
+
+        add(categoryChoice, "West");
+        pack();
+    }
+
     void categoryPanel(Card card) {
+        System.out.println("b");
         categoryChoice = new JPanel(new GridLayout(5, 1));
 
         JButton hardness = new JButton("Hardness: " + card.getHardness());
@@ -190,14 +240,23 @@ public class GameFrame extends JFrame implements ActionListener {
                     }
                 }
 
+
+                //when SuperTrump card played
                 if (chosenCard != null && chosenCard.getInstruction() != null) {
+                    if (MineralSupertrumps.firstTurn) {
+                        MineralSupertrumps.firstTurn = false;
+                    }
                     SuperTrumpCard.playCard(chosenCard, player.hasMagnetite(), player);
                 }
 
                 player.removeCard(chosenCard);
-                MineralSupertrumps.lastPlayedCard = chosenCard;
+                assert chosenCard != null;
+                //If card is not SuperTrump card
+                if (chosenCard.getInstruction() == null) {
+                    MineralSupertrumps.lastPlayedCard = chosenCard;
+                }
 
-                if (MineralSupertrumps.firstTurn) {
+                if (MineralSupertrumps.firstTurn && chosenCard.getInstruction() == null) {
                     pass.setEnabled(false);
                     for (JButton button :
                             cards) {

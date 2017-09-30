@@ -9,18 +9,22 @@ class SuperTrumpCard extends Card {
         switch (card.getName()) {
             case "The Miner": {
                 MineralSupertrumps.category = 5;
+                MineralSupertrumps.turnFinished();
                 break;
             }
             case "The Petrologist": {
                 MineralSupertrumps.category = 4;
+                MineralSupertrumps.turnFinished();
                 break;
             }
             case "The Gemmologist": {
                 MineralSupertrumps.category = 1;
+                MineralSupertrumps.turnFinished();
                 break;
             }
             case "The Mineralogist": {
                 MineralSupertrumps.category = 3;
+                MineralSupertrumps.turnFinished();
                 break;
             }
             case "The Geophysicist": {
@@ -29,10 +33,11 @@ class SuperTrumpCard extends Card {
                     System.out.println("Player " + player.getID() + "won the hand by playing combo of \"The Geophysicist\" and \"Magnetite\"");
                     MineralSupertrumps.players.remove(player);
                 }
+                MineralSupertrumps.turnFinished();
                 break;
             }
             case "The Geologist": {
-                MineralSupertrumps.frame.categoryPanel(null);
+                MineralSupertrumps.frame.categoryPanel();
                 break;
             }
         }
